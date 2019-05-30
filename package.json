@@ -42,12 +42,12 @@
     }
   ],
   "dependencies": {
-    "web3-bzz": "1.0.0-beta.36",
-    "web3-core": "1.0.0-beta.36",
-    "web3-eth": "1.0.0-beta.36",
-    "web3-eth-personal": "1.0.0-beta.36",
-    "web3-net": "1.0.0-beta.36",
-    "web3-shh": "1.0.0-beta.36",
-    "web3-utils": "1.0.0-beta.36"
+    "web3-bzz": "git+https://github.com/lemengbin/web3-bzz.git#1.0.0-beta.36",
+    "web3-core": "git+https://github.com/lemengbin/web3-core.git#1.0.0-beta.36",
+    "web3-eth": "git+https://github.com/lemengbin/web3-eth.git#1.0.0-beta.36",
+    "web3-eth-personal": "git+https://github.com/lemengbin/web3-eth-personal.git#1.0.0-beta.36",
+    "web3-net": "git+https://github.com/lemengbin/web3-net.git#1.0.0-beta.36",
+    "web3-shh": "git+https://github.com/lemengbin/web3-shh.git#1.0.0-beta.36",
+    "web3-utils": "git+https://github.com/lemengbin/web3-utils.git#1.0.0-beta.36"
   }
 }
