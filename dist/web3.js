@@ -898,7 +898,7 @@ var BigNumber = require('bignumber.js');
 var utils = require('../utils/utils');
 var c = require('../utils/config');
 var SolidityParam = require('./param');
-var Base58 = require('../base58');
+var base58 = require('../base58');
 
 
 /**
@@ -1105,7 +1105,7 @@ var formatOutputString = function (param) {
  */
 var formatOutputAddress = function (param) {
     var value = param.staticPart();
-    return Base58.AddressToBase58Address(value.slice(value.length - 40, value.length));
+    return base58.AddressToBase58Address(value.slice(value.length - 40, value.length));
 };
 
 /**
@@ -1118,7 +1118,7 @@ var formatOutputAddress = function (param) {
 var formatInputAddress = function (value) {
     if (utils.isAddress(value)) {
         BigNumber.config(c.ETH_BIGNUMBER_ROUNDING_MODE);
-        var result = utils.padLeft(utils.toTwosComplement(Base58.Base58AddressToAddress(value)).toString(16), 64);
+        var result = utils.padLeft(utils.toTwosComplement(base58.Base58AddressToAddress(value)).toString(16), 64);
         return new SolidityParam(result);
     }
     throw new Error('invalid address');
@@ -3684,6 +3684,7 @@ module.exports = Filter;
 var utils = require('../utils/utils');
 var config = require('../utils/config');
 var Iban = require('./iban');
+var base58 = require('../base58');
 
 /**
  * Should the format output to a big number
@@ -3785,6 +3786,17 @@ var outputTransactionFormatter = function (tx){
     tx.gas = utils.toDecimal(tx.gas);
     tx.gasPrice = utils.toBigNumber(tx.gasPrice);
     tx.value = utils.toBigNumber(tx.value);
+
+    if (tx.to) {
+        tx.to = base58.AddressToBase58Address(tx.to);
+    } else {
+        tx.to = null;
+    }
+
+    if (tx.from) {
+        tx.from = base58.AddressToBase58Address(tx.from);
+    }
+
     return tx;
 };
 
@@ -3807,6 +3819,10 @@ var outputTransactionReceiptFormatter = function (receipt){
         receipt.logs = receipt.logs.map(function(log){
             return outputLogFormatter(log);
         });
+    }
+
+    if (receipt.contractAddress) {
+        receipt.contractAddress = base58.AddressToBase58Address(receipt.contractAddress);
     }
 
     return receipt;
@@ -3839,6 +3855,9 @@ var outputBlockFormatter = function(block) {
         });
     }
 
+    if (block.miner)
+        block.miner = base58.AddressToBase58Address(block.miner);
+
     return block;
 };
 
@@ -3856,6 +3875,10 @@ var outputLogFormatter = function(log) {
         log.transactionIndex = utils.toDecimal(log.transactionIndex);
     if(log.logIndex)
         log.logIndex = utils.toDecimal(log.logIndex);
+
+    if (log.address) {
+        log.address = base58.AddressToBase58Address(log.address);
+    }
 
     return log;
 };
@@ -3960,7 +3983,7 @@ module.exports = {
 };
 
 
-},{"../utils/config":18,"../utils/utils":20,"./iban":33}],31:[function(require,module,exports){
+},{"../utils/config":18,"../utils/utils":20,"./iban":33,"../base58":86}],31:[function(require,module,exports){
 /*
     This file is part of web3.js.
 
@@ -13715,6 +13738,9 @@ var StringToBytes = function (str) {
 
 var AddressToBase58Address = function (value) {
     value = value.toString().replace('0x','');
+    if ((/^(Um)?[1-9a-z]{33}$/i.test(value)) && (!/[OIl]{1}/.test(value))) {
+        return value;
+    }
     var buff = '0FA2' + value.slice(value.length - 40, value.length);
     var hash1 = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(buff));
     var hash2 = CryptoJS.SHA256(hash1).toString();
@@ -13722,7 +13748,14 @@ var AddressToBase58Address = function (value) {
 };
 
 var Base58AddressToAddress = function (value) {
-    return "0x" + BytesToString(Base58Decode(value.toString()).slice(2, 22));
+    value = value.toString();
+    if (/^(0x)?[0-9a-f]{40}$/i.test(value)) {
+        return value;
+    }
+    if (/^[0-9a-f]{40}$/i.test(value)) {
+        return '0x' + value;
+    }
+    return "0x" + BytesToString(Base58Decode(value).slice(2, 22));
 };
 
 module.exports = {

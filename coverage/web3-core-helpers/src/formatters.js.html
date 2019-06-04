@@ -898,6 +898,7 @@
 var _ = require('underscore');
 var utils = require('web3-utils');
 var Iban = require('web3-eth-iban');
+var base58 = require('../base58');
 &nbsp;
 /**
  * Should the format output to a big number
@@ -1032,14 +1033,14 @@ var outputTransactionFormatter = function (tx){
     tx.gasPrice = outputBigNumberFormatter(tx.gasPrice);
     tx.value = outputBigNumberFormatter(tx.value);
 &nbsp;
-    if(tx.to &amp;&amp; utils.isAddress(tx.to)) { // tx.to could be `0x0` or `null` while contract creation
-        tx.to = utils.toChecksumAddress(tx.to);
+    if(tx.to) {
+        tx.to = base58.AddressToBase58Address(tx.to);
     } else {
         tx.to = null; // set to `null` if invalid address
     }
 &nbsp;
     <span class="missing-if-branch" title="else path not taken" >E</span>if(tx.from) {
-        tx.from = utils.toChecksumAddress(tx.from);
+        tx.from = base58.AddressToBase58Address(tx.from);
     }
 &nbsp;
     return tx;
@@ -1069,7 +1070,7 @@ var outputTransactionReceiptFormatter = function (receipt){
     }
 &nbsp;
     if(receipt.contractAddress) {
-        receipt.contractAddress = utils.toChecksumAddress(receipt.contractAddress);
+        receipt.contractAddress = base58.AddressToBase58Address(receipt.contractAddress);
     }
 &nbsp;
     return receipt;
@@ -1105,7 +1106,7 @@ var outputBlockFormatter = function(block) {
     }
 &nbsp;
     if (block.miner)
-        block.miner = utils.toChecksumAddress(block.miner);
+        block.miner = base58.AddressToBase58Address(block.miner);
 &nbsp;
     return block;
 };
@@ -1172,7 +1173,7 @@ var outputLogFormatter = function(log) {
         log.logIndex = utils.hexToNumber(log.logIndex);
 &nbsp;
     if (log.address)
-        log.address = utils.toChecksumAddress(log.address);
+        log.address = base58.AddressToBase58Address(log.address);
 &nbsp;
     return log;
 };

@@ -600,7 +600,7 @@ var _ = require('underscore');
 var utils = require('web3-utils');
 var BN = require('bn.js');
 var SolidityParam = require('./param');
-var Base58 = require('../base58');
+var base58 = require('../base58');
 &nbsp;
 &nbsp;
 &nbsp;
@@ -821,7 +821,7 @@ var formatOutputString = function (param) {
  */
 var formatOutputAddress = function (param) {
     var value = param.staticPart();
-    return Base58.AddressToBase58Address(value.slice(value.length - 40, value.length));
+    return base58.AddressToBase58Address(value.slice(value.length - 40, value.length));
 };
 &nbsp;
 /**
@@ -834,7 +834,7 @@ var formatOutputAddress = function (param) {
 var formatInputAddress = function (value) {
     if (utils.isAddress(value)) {
         BigNumber.config(c.ETH_BIGNUMBER_ROUNDING_MODE);
-        var result = utils.padLeft(utils.toTwosComplement(Base58.Base58AddressToAddress(value)).toString(16), 64);
+        var result = utils.padLeft(utils.toTwosComplement(base58.Base58AddressToAddress(value)).toString(16), 64);
         return new SolidityParam(result);
     }
     throw new Error('invalid address');
