@@ -13737,8 +13737,7 @@ var StringToBytes = function (str) {
 };
 
 var AddressToBase58Address = function (value) {
-    value = value.toString().replace('0x','');
-    if ((/^(Um)?[1-9a-z]{33}$/i.test(value)) && (!/[OIl]{1}/.test(value))) {
+    if ((/^(Um)[1-9a-z]{33}$/i.test(value)) && (!/[OIl]{1}/.test(value))) {
         return value;
     }
     var buff = '0FA2' + value.slice(value.length - 40, value.length);
@@ -13748,8 +13747,7 @@ var AddressToBase58Address = function (value) {
 };
 
 var Base58AddressToAddress = function (value) {
-    value = value.toString();
-    if (/^(0x)?[0-9a-f]{40}$/i.test(value)) {
+    if (/^(0x)[0-9a-f]{40}$/i.test(value)) {
         return value;
     }
     if (/^[0-9a-f]{40}$/i.test(value)) {
